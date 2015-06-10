@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:py="http://genshi.edgewall.org/"
+            lang="en" class="no-js">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=1024" />
+    <title>Timer</title>
+    
+    <meta name="description" content="This timer display is based on
+    impress.js, which is a javascript presentation tool.  See
+    https://github.com/bartaz/impress.js/blob/master/index.html for
+    documentation about the structure of this HTML file." /> 
+    <meta name="author" content="Dave Kliczbor, based on the impress.js demo file by Bartek Szopka" />
+
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:regular,semibold,italic,italicsemibold|PT+Sans:400,700,400italic,700italic|PT+Serif:400,700,400italic,700italic" rel="stylesheet" />
+
+    <link href="static/css/impress-demo.css" rel="stylesheet" />
+    
+</head>
+
+<body class="impress-not-supported">
+
+<div class="fallback-message">
+    <p>Your browser <b>doesn't support the features required</b> by impress.js, so you are presented with a simplified version of this presentation.</p>
+    <p>For the best experience please use the latest <b>Chrome</b>, <b>Safari</b> or <b>Firefox</b> browser.</p>
+</div>
+
+<div id="impress">
+
+<!-- slide_params has to be filled in the python code calling this template -->
+<py:for each="s in slide_params">
+	<div id="slide${s[0]}" class="step" data-x="${s[1]}" data-y="${s[2]}" data-z="${s[3]}" data-rotate-x="${s[4]}" data-rotate-y="${s[5]}" data-rotate-z="${s[6]}" data-scale="${s[7]}">${s[8]}</div>
+</py:for>
+
+
+</div>
+<div class="hint">
+    <p>Use a spacebar or arrow keys to navigate</p>
+</div>
+<script>
+if ("ontouchstart" in document.documentElement) { 
+    document.querySelector(".hint").innerHTML = "<p>Tap on the left or right to navigate</p>";
+}
+</script>
+<script src="static/js/impress.js"></script>
+<audio id="buzzer">
+	<source src="static/wav/buzzer.wav" type="audio/wav"/>
+</audio>
+
+<script>
+  var impress = impress();
+  impress.init();
+
+  // the timing could be more exact by using a different method of timing the transitions
+  // and the UX could be better, but hey, this is created under pressure using stackoverflow-driven programming.
+  // TODO: improve UX and exactness
+  document.addEventListener('impress:stepenter', function(e){
+    if (typeof timing !== 'undefined') clearInterval(timing);
+    if (e.target.id !== 'slide0') {
+	timing = setInterval(impress.next, 4000);
+    } else {
+    	document.getElementById('buzzer').play();
+    }
+  });
+</script>
+
+</body>
+</html>
