@@ -76,7 +76,7 @@ body {
 	<py:for each="d in (5,10,15,30,60)">
 		<p>
 		<py:for each="s in (d*6, d*12, d*24, d*36, d*60, d*120)">
-			<input type="button" onClick="location.href='/${s}/${d}/random/nosound';" value="${s/60}m ${s % 60}s / ${d}"></input>
+			<input type="button" onClick="location.href='/${s}/${d}/'+document.getElementById('preset').value+'/nosound';" value="${s/60}m ${s % 60}s / ${d}"></input>
 		</py:for>
 		</p>
 	</py:for>
