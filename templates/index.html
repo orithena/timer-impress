@@ -16,11 +16,78 @@
 
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:regular,semibold,italic,italicsemibold|PT+Sans:400,700,400italic,700italic|PT+Serif:400,700,400italic,700italic" rel="stylesheet" />
 
-    <link href="static/css/impress-demo.css" rel="stylesheet" />
-    
+    <link href="/static/css/impress-demo.css" rel="stylesheet" />
+    <link href="/static/css/timer.css" rel="stylesheet" />
 </head>
 
 <body class="impress-not-supported">
+
+<py:if test="len(slide_params) == 0">
+
+<script type="text/javascript">
+	function relocate(form) {
+		location.href = "/" + 
+			((form.elements['seconds'].value*1) + (form.elements['minutes'].value*60)) + 
+			"/" +
+			form.elements['step'].value + 
+			"/" +
+			form.elements['preset'].value + 
+			"/" +
+			(form.elements['sound'].value ? "nosound" : "sound");
+		return false;
+	}
+</script>
+<style type="text/css">
+body {
+ pointer-events: all;
+}
+</style>
+
+<div class="fallback-message">
+	<h1>This is a Countdown Timer.</h1>
+	<form onSubmit="return relocate(this);">
+		<p>
+		<input type="text" size="2" id="minutes" name="minutes" value="5"></input>
+		<label for="time">m</label>
+		<input type="text" size="2" id="seconds" name="seconds" value="0"></input>
+		<label for="time">sec</label>
+		</p>
+		<p>
+		<label for="step">Step every</label>
+		<input type="text" size="2" id="step" name="step" value="5"></input>
+		<label for="step">sec</label>
+		</p>
+		<p>
+		<label for="preset">Algorithm</label>
+		<select name="preset" id="preset">
+			<py:for each="preset in sorted(presets)">
+				<option value="${preset}">${preset}</option>
+			</py:for>
+		</select>
+		</p>
+		<p>
+		<input type="checkbox" id="sound" name="sound"></input>
+		<label for="sound">Honk at end?</label>
+		</p>
+		<p>
+		<input type="submit" value="Start!"></input>
+		</p>
+	</form>
+	<py:for each="d in (5,10,15,30,60)">
+		<p>
+		<py:for each="s in (d*6, d*12, d*24, d*36, d*60, d*120)">
+			<input type="button" onClick="location.href='/${s}/${d}/random/nosound';" value="${s/60}m ${s % 60}s / ${d}"></input>
+		</py:for>
+		</p>
+	</py:for>
+	<p>Esc = Stop; p = Pause; Space/Cursor = Go on; Home = Restart; End =
+	TIIIIME OUT!
+	</p>
+</div>
+
+</py:if>
+
+<py:if test="len(slide_params) &gt; 0">
 
 <div class="fallback-message">
     <p>Your browser <b>doesn't support the features required</b> by impress.js, so you are presented with a simplified version of this presentation.</p>
@@ -44,27 +111,45 @@ if ("ontouchstart" in document.documentElement) {
     document.querySelector(".hint").innerHTML = "<p>Tap on the left or right to navigate</p>";
 }
 </script>
-<script src="static/js/impress.js"></script>
+<script src="/static/js/impress.js"></script>
 <audio id="buzzer">
-	<source src="static/wav/buzzer.wav" type="audio/wav"/>
+	<source src="/static/wav/buzzer.wav" type="audio/wav"/>
 </audio>
 
 <script>
   var impress = impress();
   impress.init();
+  timing = null;
 
   // the timing could be more exact by using a different method of timing the transitions
   // and the UX could be better, but hey, this is created under pressure using stackoverflow-driven programming.
   // TODO: improve UX and exactness
   document.addEventListener('impress:stepenter', function(e){
+    document.getElementById('impress').classList.remove('paused');
     if (typeof timing !== 'undefined') clearInterval(timing);
     if (e.target.id !== 'slide0') {
-	timing = setInterval(impress.next, 4000);
-    } else {
+	timing = setInterval(impress.next, ${(step-1)*1000});
+    } else if('${sound}' == 'True') {
     	document.getElementById('buzzer').play();
     }
   });
+  document.addEventListener('keyup', function(e){
+  	switch(e.keyCode) {
+  		case 80: clearInterval(timing);
+  			 document.getElementById('impress').classList.add('paused');
+  			 break;
+  		case 35: clearInterval(timing);
+  			 impress.goto(-1);
+  			 break;
+  		case 36: clearInterval(timing);
+  			 impress.goto(0);
+  			 break;
+  		case 27: location.href="/";
+  			 break;
+  	}
+  });
 </script>
+</py:if>
 
 </body>
 </html>

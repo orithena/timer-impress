@@ -1,0 +1,32 @@
+.paused div.step.active.present {
+	background-color: darkgreen;
+}
+
+p input, p select {
+    padding: .3em;
+    border-radius: 5px;
+    margin: 0.4em auto;
+    background-color: #FFF0D4;
+}
+
+input[type="button"], input[type="submit"] {
+    min-width: 7em;
+}
+
+form p * {
+    font-size: 120%;
+}
+
+form p {
+    display: block;
+    text-align: center;
+}
+
+.fallback-message * {
+    text-align: center;
+}
+
+.fallback-message h1 {
+    font-size: 200%;
+    font-weight: bold;
+}
