@@ -16,8 +16,8 @@
 
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:regular,semibold,italic,italicsemibold|PT+Sans:400,700,400italic,700italic|PT+Serif:400,700,400italic,700italic" rel="stylesheet" />
 
-    <link href="/static/css/impress-demo.css" rel="stylesheet" />
-    <link href="/static/css/timer.css" rel="stylesheet" />
+    <link href="${ url_for('static', filename='css/impress-demo.css') }" rel="stylesheet" />
+    <link href="${ url_for('static', filename='css/timer.css') }" rel="stylesheet" />
 </head>
 
 <body class="impress-not-supported">
@@ -26,7 +26,7 @@
 
 <script type="text/javascript">
 	function relocate(form) {
-		location.href = "/" + 
+		location.href = "${ url_for('welcome') }" + 
 			((form.elements['seconds'].value*1) + (form.elements['minutes'].value*60)) + 
 			"/" +
 			form.elements['step'].value + 
@@ -76,7 +76,7 @@ body {
 	<py:for each="d in (5,10,15,30,60)">
 		<p>
 		<py:for each="s in (d*6, d*12, d*24, d*36, d*60, d*120)">
-			<input type="button" onClick="location.href='/${s}/${d}/'+document.getElementById('preset').value+'/nosound';" value="${s/60}m ${s % 60}s / ${d}"></input>
+			<input type="button" onClick="location.href='${ url_for('welcome') }${s}/${d}/'+document.getElementById('preset').value+'/nosound';" value="${s/60}m ${s % 60}s / ${d}"></input>
 		</py:for>
 		</p>
 	</py:for>
@@ -111,9 +111,9 @@ if ("ontouchstart" in document.documentElement) {
     document.querySelector(".hint").innerHTML = "<p>Tap on the left or right to navigate</p>";
 }
 </script>
-<script src="/static/js/impress.js"></script>
+<script src="${ url_for('static', filename='js/impress.js') }"></script>
 <audio id="buzzer">
-	<source src="/static/wav/buzzer.wav" type="audio/wav"/>
+	<source src="${ url_for('static', filename='wav/buzzer.wav') }" type="audio/wav"/>
 </audio>
 
 <script>
