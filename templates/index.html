@@ -16,17 +16,17 @@
 
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:regular,semibold,italic,italicsemibold|PT+Sans:400,700,400italic,700italic|PT+Serif:400,700,400italic,700italic" rel="stylesheet" />
 
-    <link href="${ url_for('static', filename='css/impress-demo.css') }" rel="stylesheet" />
-    <link href="${ url_for('static', filename='css/timer.css') }" rel="stylesheet" />
+    <link href="{{ url_for('static', filename='css/impress-demo.css') }}" rel="stylesheet" />
+    <link href="{{ url_for('static', filename='css/timer.css') }}" rel="stylesheet" />
 </head>
 
 <body class="impress-not-supported">
 
-<py:if test="len(slide_params) == 0">
+{% if slide_params|length == 0 %}
 
 <script type="text/javascript">
 	function relocate(form) {
-		location.href = "${ url_for('welcome') }" + 
+		location.href = "{{ url_for('welcome') }}" + 
 			((form.elements['seconds'].value*1) + (form.elements['minutes'].value*60)) + 
 			"/" +
 			form.elements['step'].value + 
@@ -60,9 +60,9 @@ body {
 		<p>
 		<label for="preset">Algorithm</label>
 		<select name="preset" id="preset">
-			<py:for each="preset in sorted(presets)">
-				<option value="${preset}">${preset}</option>
-			</py:for>
+      {% for preset in presets|sort %}
+				<option value="{{preset}}">{{preset}}</option>
+      {% endfor %}
 		</select>
 		</p>
 		<p>
@@ -73,21 +73,21 @@ body {
 		<input type="submit" value="Start!"></input>
 		</p>
 	</form>
-	<py:for each="d in (5,10,15,30,60)">
+  {% for d in (5, 10, 15, 30, 60) %}
 		<p>
-		<py:for each="s in (d*6, d*12, d*24, d*36, d*60, d*120)">
-			<input type="button" onClick="location.href='${ url_for('welcome') }${s}/${d}/'+document.getElementById('preset').value+'/nosound';" value="${s/60}m ${s % 60}s / ${d}"></input>
-		</py:for>
+      {% for s in (d*6, d*12, d*24, d*36, d*60, d*120) %}
+        <input type="button" onClick="location.href='{{ url_for('welcome') }}{{s}}/{{d}}/'+document.getElementById('preset').value+'/nosound';" value="{{s/60}}m {{s % 60}}s / {{d}}"></input>
+      {% endfor %}
 		</p>
-	</py:for>
-	<p>Esc = Stop; p = Pause; Space/Cursor = Go on; Home = Restart; End =
-	TIIIIME OUT!
+  {% endfor %}
+	<p>
+    Esc = Stop; p = Pause; Space/Cursor = Go on; Home = Restart; End = TIIIIME OUT!
 	</p>
 </div>
 
-</py:if>
+{% endif %}
 
-<py:if test="len(slide_params) &gt; 0">
+{% if slide_params|length > 0 %}
 
 <div class="fallback-message">
     <p>Your browser <b>doesn't support the features required</b> by impress.js, so you are presented with a simplified version of this presentation.</p>
@@ -97,9 +97,9 @@ body {
 <div id="impress">
 
 <!-- slide_params has to be filled in the python code calling this template -->
-<py:for each="s in slide_params">
-	<div id="slide${s[0]}" class="step" data-x="${s[1]}" data-y="${s[2]}" data-z="${s[3]}" data-rotate-x="${s[4]}" data-rotate-y="${s[5]}" data-rotate-z="${s[6]}" data-scale="${s[7]}">${s[8]}</div>
-</py:for>
+{% for s in slide_params %}
+	<div id="slide{{s[0]}}" class="step" data-x="{{s[1]}}" data-y="{{s[2]}}" data-z="{{s[3]}}" data-rotate-x="{{s[4]}}" data-rotate-y="{{s[5]}}" data-rotate-z="{{s[6]}}" data-scale="{{s[7]}}">{{s[8]}}</div>
+{% endfor %}
 
 
 </div>
@@ -111,9 +111,9 @@ if ("ontouchstart" in document.documentElement) {
     document.querySelector(".hint").innerHTML = "<p>Tap on the left or right to navigate</p>";
 }
 </script>
-<script src="${ url_for('static', filename='js/impress.js') }"></script>
+<script src="{{ url_for('static', filename='js/impress.js') }}"></script>
 <audio id="buzzer">
-	<source src="${ url_for('static', filename='wav/buzzer.wav') }" type="audio/wav"/>
+	<source src="{{ url_for('static', filename='wav/buzzer.wav') }}" type="audio/wav"/>
 </audio>
 
 <script>
@@ -128,8 +128,8 @@ if ("ontouchstart" in document.documentElement) {
     document.getElementById('impress').classList.remove('paused');
     if (typeof timing !== 'undefined') clearInterval(timing);
     if (e.target.id !== 'slide0') {
-	timing = setInterval(impress.next, ${(step-1)*1000});
-    } else if('${sound}' == 'True') {
+	timing = setInterval(impress.next, {{(step-1)*1000}});
+    } else if('{{sound}}' == 'True') {
     	document.getElementById('buzzer').play();
     }
   });
@@ -149,7 +149,7 @@ if ("ontouchstart" in document.documentElement) {
   	}
   });
 </script>
-</py:if>
+{% endif %}
 
 </body>
 </html>
